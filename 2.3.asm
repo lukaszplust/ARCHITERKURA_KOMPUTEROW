@@ -8,7 +8,7 @@ public _main
 .data
 tytul_Unicode	dw 'Z','n','a','k','i',' ', 0
 tekst_Unicode	dw 'T','o',' ','j','e','s','t',' ','p','i','e','s',' '
-				      dw 0D83Dh,0DC15h,' ','i',' ','k','o','t',' ',0D83Dh, 0DC31h, 0
+		dw 0D83Dh,0DC15h,' ','i',' ','k','o','t',' ',0D83Dh, 0DC31h, 0
 				
 .code
 _main PROC
