@@ -9,7 +9,7 @@ public  _main
 
 .data
 tekst     db  10, 'Proszę napisać jakiś tekst i nacisnac Enter:', 10
-magazyn   db  80 dup (?), 10
+magazyn   db  80 dup (?)
 koniec db ?
 liczba_znakow dd ?
 
