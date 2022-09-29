@@ -2,10 +2,8 @@
 .model flat
 
 extern _ExitProcess@4  : PROC
-extern _MessageBoxA@16 : PROC
-extern _MessageBoxW@16 : PROC
-extern __write         : PROC ; (int handle, char * text, int length)
-extern __read          : PROC ; (int handle, char * text, int lengthLimit)
+extern __write         : PROC 
+extern __read          : PROC 
 
 public  _main
 
