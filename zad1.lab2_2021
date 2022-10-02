@@ -1,3 +1,4 @@
+;szyfr Cezara, przesunięcie o 2 ostatnie cyfry indeksu
 .686
 .model flat
 extern _ExitProcess@4 : PROC
