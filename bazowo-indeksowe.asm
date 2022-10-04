@@ -8,9 +8,9 @@ znaki dw 1,2,3,4,5,6,0
 .code
 _main proc
 ;BARDZO WAŻNE dla db -> mnożnik 1 ->przesyłamy do rejestru np.al
-;             dla dw -> mnożnik 2 ->przesyłamy do rejestru
-;             dla dd -> mnożnik 4 ->przesyłamy do rejestru
-;             dla dq -> mnożnik 8 ->przesyłamy do rejestru
+;             dla dw -> mnożnik 2 ->przesyłamy do rejestru ax
+;             dla dd -> mnożnik 4 ->przesyłamy do rejestru eax
+;             dla dq -> mnożnik 8 ->przesyłamy do rejestru rax
 mov ebx, OFFSET znaki; ebx =1
 mov eax,0; poczatkowa suma wartosci
 mov esi,0;indeks elementu tablicy
