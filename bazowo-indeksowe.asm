@@ -18,7 +18,10 @@ mov ecx,5;licznik elementow
 
 sumuj:
 add ax,[ebx + 2*esi]; do aktualnej zawartosci ax dodajemy OFFSET ebx(adres efektywny talicy(dla nas to 1)) mnożnik, czyli 2 oznacza rozmiar elementu(16 bitowy)
+
 ;dodajemy tablica[i] - >esi = i
+;ewnetualne przesunięcie np.[ebx + 2*esi +2] ->oznacza,że zaczynamy sumować od 2, +4 -> sumujemy od 3, +6 ->sumujemy od 4 itp...
+
 add esi,1
 loop sumuj
 
