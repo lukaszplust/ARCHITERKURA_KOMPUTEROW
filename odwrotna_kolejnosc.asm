@@ -6,12 +6,13 @@ public _main
 .data
 tytul dw 'T','y','t','u','l', 0
 
-magazyn_input dw 'a','1',' ','b','2',' ','c','3'
+magazyn_input dw 'w','y','r','a','z','A',' ','w','y','r','a','z','B',' ','w','y','r','a','z','C';[bazowy,indeksowy-1] -> to za 'C',a [bazowy,indeksowy-2] ->to 'C' 
+;na to wychodzi z obliczen ale pewny nie jestem:DDD
 
 magazyn_output dw 21 dup (?)
 .code
 _main proc
-	mov ecx, 10 ; licznik glownej petli, ilosc znakow w magazyn_inputu
+	mov ecx, 20 ; licznik glownej petli, ilosc znakow w magazyn_inputu
 	mov edi, 0 ; indeks tekstu output
 	mov esi, 0 ; ilosc elementow w wyrazie
 	mov edx, 0 ; wyzerowanie edx dla naszego inputu
