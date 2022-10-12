@@ -1,0 +1,85 @@
+.686
+.model flat
+public _main
+extern _ExitProcess@4 : PROC
+extern __write : PROC
+extern __read : PROC
+.data
+
+tekst_output db 10,'Mozesz dodac cztery spacje uzywajac \t',10
+koniec_tekstu db ?
+magazyn_input db 80 dup (?)
+magazyn_output db 80 dup (?)
+.code
+
+_main proc
+
+; wiadomosc tekstowa
+mov ecx, (OFFSET koniec_tekstu) - (OFFSET tekst_output)
+push ecx
+push OFFSET tekst_output
+push 1
+call __write
+add esp, 12
+; wczytanie inputu
+push 80
+push OFFSET magazyn_input
+push 0
+call __read
+add esp, 12
+
+mov ecx,eax; licznik petli
+mov esi,0; indeks inputu
+mov edi,0; indeks outputu
+
+ptl:
+	mov dl,magazyn_input[esi]
+	inc esi
+	cmp dl, 005Ch
+	je kolejne
+	jne output
+
+
+kolejne:
+	mov dl,magazyn_input[esi]
+	inc esi
+	cmp dl,'t'
+	jne back
+	mov eax,0; licznik spacji
+	loop spacja
+
+;back dla przypadku gdy wyzej nie mamy po znaku \ literki t. Wpisujemy wtedy do outputu znak \
+back:
+	mov magazyn_output[edi], 005Ch
+	inc edi
+	dec ecx
+	dec esi
+	loop ptl
+
+
+
+spacja:
+	mov magazyn_output[edi],' '
+	inc edi
+	inc eax
+	cmp eax,4
+	jne spacja
+	loop ptl
+
+output:
+	mov magazyn_output[edi],dl
+	inc edi
+	loop ptl
+	jmp koniec
+
+; wiadomosc output
+koniec: push edi
+push OFFSET magazyn_output
+push 1
+call __write
+add esp, 12
+; koniec programu
+push 0
+call _ExitProcess@4
+_main endp
+end
