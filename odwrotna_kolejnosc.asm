@@ -7,7 +7,7 @@ public _main
 tytul dw 'T','y','t','u','l', 0
 
 magazyn_input dw 'w','y','r','a','z','A',' ','w','y','r','a','z','B',' ','w','y','r','a','z','C';[bazowy,indeksowy-1] -> to za 'C',a [bazowy,indeksowy-2] ->to 'C' 
-;na to wychodzi z obliczen ale pewny nie jestem:DDD
+;na to wychodzi z obliczen ale pewny nie jestem:DD
 
 magazyn_output dw 21 dup (?)
 .code
