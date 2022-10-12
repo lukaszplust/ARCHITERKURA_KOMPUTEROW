@@ -33,24 +33,25 @@ ptl:
 	jne output
 
 
-;wrzucam do tablicy A
+;wrzucam C zamiast A
 dodajA:
 	mov magazyn_output[edi],0043h
 	inc edi
 	loop ptl
 
-;wrzucam do tablicy B
+;wrzucam B za B
 dodajB:
 	mov magazyn_output[edi],0042h
 	inc edi
 	loop ptl
 
-	;wrzucam do tablicy C
+	;wrzucam A za C
 dodajC:
 	mov magazyn_output[edi],0041h
 	inc edi
 	loop ptl
-
+	
+;reszta leci do outputa z glownej petli
 output:
 	mov magazyn_output[edi],dx
 	inc edi
