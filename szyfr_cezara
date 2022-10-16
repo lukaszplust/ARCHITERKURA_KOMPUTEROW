@@ -1,31 +1,30 @@
+
 .686
 .model flat
-
 extern _ExitProcess@4 : PROC
-extern __write : PROC ; (dwa znaki podkreślenia)
-extern __read : PROC ; (dwa znaki podkreślenia)
-
+extern __write : PROC 
+extern __read : PROC 
 public _main
 .data
-tekst_pocz db 10, 'napisz cos',10
+tekst_pocz db 10, 'Proszę napisać jakiś tekst '
+db 'i nacisnac Enter', 10
 koniec_t db ?
+
 
 magazyn_inputu db 80 dup (?)
 magazyn_outputu db 80 dup (?)
 
 liczba_znakow dd ?
-
 .code
 _main PROC
-; wyświetlenie tekstu informacyjnego
 
-; liczba znaków tekstu
 mov ecx,(OFFSET koniec_t) - (OFFSET tekst_pocz)
 push ecx
 push OFFSET tekst_pocz ; adres tekstu
 push 1 ; nr urządzenia (tu: ekran - nr 1)
 call __write ; wyświetlenie tekstu początkowego
 add esp, 12 ; usuniecie parametrów ze stosu
+
 
 ; czytanie wiersza z klawiatury
 push 80 ; maksymalna liczba znaków
@@ -34,31 +33,29 @@ push 0 ; nr urządzenia (tu: klawiatura - nr 0)
 call __read ; czytanie znaków z klawiatury
 add esp, 12 ; usuniecie parametrów ze stosu
 
-
-
 mov liczba_znakow, eax
-mov ecx,eax; licznik petli
-mov eax,0; indeks inputu
+mov ecx,eax; glowny licznik
+mov esi,0; indeks inputu
 mov edi,0; indeks outputu
+
 ptl:
-	mov dl, magazyn_inputu[eax]
-	inc eax
+	mov dl,magazyn_inputu[esi]
+	inc esi
 	cmp dl,32
-	jl bledna_liczba
+	jl blad
+	cmp dl,125
+	jg blad
 	add dl,37
 	mov magazyn_outputu[edi],dl
 	inc edi
 	loop ptl
-	
-
-bledna_liczba:
-	loop bledna_liczba
 
 
+blad:
+	loop blad
 
 
-	
-
+; wyświetlenie przekształconego tekstu
 push liczba_znakow
 push OFFSET magazyn_outputu
 push 1
