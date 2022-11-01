@@ -11,6 +11,7 @@ koniec_t db ?
 magazyn_inputu db 80 dup (?)
 magazyn_outputu db 80 dup (?)
 liczba_znakow dd ?
+
 .code
 _main PROC
 ; wyświetlenie tekstu informacyjnego
@@ -105,7 +106,7 @@ output:
 
 
 licznik_wypisz:
-	mov magazyn_outputu[edi],50
+	mov magazyn_outputu[edi-16],50
 	inc edi
 	jmp koniec
 
