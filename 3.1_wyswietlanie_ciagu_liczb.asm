@@ -55,7 +55,7 @@ wypelnij:
 koniec:
 	mov byte ptr znaki[0],0Ah; znak nowego wiersza dla tablicy[0], zeby pod soba było widac kolejne liczby ciagu
 	mov byte ptr znaki[11],0Ah; dla ostatniego miejsca w tablicy rowniez zeby było widac przejscie do nowej lini dla nowego znaku
-	;znaki[12] to chyba miejsce dla ENTERA MUSIAŁBYM SIE UPEWNIC ALE W TAKI SPOSOB SMIGA TO CHYBA TAK:DDD
+	;znaki[12] to chyba miejsce dla ENTERA MUSIAŁBYM SIE UPEWNIC ALE W TAKI SPOSOB SMIGA TO CHYBA TAK:DD
 	push dword ptr 12; liczba wyswietlanych znakow
 	push dword ptr offset znaki; pchniecie obszaru do wyswietlenia
 	push dword ptr 1; to dla ekranu
