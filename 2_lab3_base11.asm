@@ -1,18 +1,17 @@
 .686
 .model flat
+extern __write : PROC
 extern __read : PROC
-extern __write : PROC
-extern __write : PROC
 extern _ExitProcess@4 : PROC
 public _main
 .data
-obszar db 12 dup (?)
-dziesiec dd 10
+obszar db 14 dup (?) ; deklaracja do przechowywania wprowadzonych cyfr
+jedenascie dd 11 ; tu zmieniam w zalezności od base tu jest 11 dla 11:D
 znaki db 12 dup (?) ; deklaracja do przechowywania
 ; tworzonych cyfr
 .code
 
-wczytaj_EAX_U2_b11 PROC
+wczytaj_do_EAX PROC
 push ebx
 push esi
 push edi
@@ -24,31 +23,56 @@ call __read ; odczytywanie znaków z klawiatury
 add esp, 12 ; usunięcie parametrów ze stosu
 ; biezaca wartość przekształcanej liczby przechowywana jest
 ; w rejestrze EAX; przyjmujemy 0 jako wartość początkową
+
 xor eax, eax
 mov ebx, OFFSET obszar ; adres obszaru ze znakami
 pobieraj_znaki:
 mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
 inc ebx ; zwiększenie indeksu
+cmp cl,41h
+je A
+cmp cl,2Dh
+je neguj
+cmp cl,2Bh
+je wroc
 cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
 je byl_enter ; skok, gdy naciśnięto Enter
 sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
 movzx ecx, cl ; przechowanie wartości cyfry w ECX
 ; mnożenie wcześniej obliczonej wartości razy 10
-mul dword PTR dziesiec
+mul dword PTR jedenascie
 add eax, ecx ; dodanie ostatnio odczytanej cyfry
 jmp pobieraj_znaki ; skok na początek pętli
+
+A:
+add eax,120
+jmp pobieraj_znaki
+wroc:
+jmp pobieraj_znaki
+neguj:
+mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
+inc ebx ; zwiększenie indeksu
+cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
+je byl_enter ; skok, gdy naciśnięto Enter
+cmp cl,41h
+je A
+sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
+movzx ecx, cl ; przechowanie wartości cyfry w ECX
+add eax, ecx ; dodanie ostatnio odczytanej cyfry
+neg eax
+jmp neguj ; skok na początek pętli
 byl_enter: ; wartość binarna w EAX
 pop ebp
 pop edi
 pop esi
 pop ebx
 ret
-wczytaj_EAX_U2_b11 ENDP
+wczytaj_do_EAX ENDP
 
 wyswietl_EAX_U2_b11 PROC
 pusha
 mov esi, 10 ; indeks w tablicy 'znaki'
-mov ebx, 11 ; dzielnik równy 10
+mov ebx, 11 ; tu zmieniam dla base 11
 mov edi,eax
 ;neg edi -> dla liczby ujemnej
 ;and edi, 0F0000000h
@@ -139,12 +163,11 @@ add esp, 12
 popa
 ret
 wyswietl_EAX_U2_b11 ENDP
+
 _main PROC
-xor eax, eax
-call wczytaj_EAX_U2_b11
+call wczytaj_do_EAX
 sub eax,10
 call wyswietl_EAX_U2_b11
-push 0
 call _ExitProcess@4
 _main ENDP
 END
