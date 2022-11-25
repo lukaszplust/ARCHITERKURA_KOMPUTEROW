@@ -7,11 +7,10 @@ public _main
 .data
 obszar db 14 dup (?) ; deklaracja do przechowywania wprowadzonych cyfr
 jedenascie dd 11 ; tu zmieniam w zalezności od base tu jest 11 dla 11:D
-znaki db 12 dup (?) ; deklaracja do przechowywania
-; tworzonych cyfr
+znaki db 12 dup (?) ; deklaracja do przechowywania tworzonych cyfr
 .code
 
-wczytaj_do_EAX PROC
+wczytaj_EAX_U2_b11 PROC
 push ebx
 push esi
 push edi
@@ -39,7 +38,6 @@ cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
 je byl_enter ; skok, gdy naciśnięto Enter
 sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
 movzx ecx, cl ; przechowanie wartości cyfry w ECX
-; mnożenie wcześniej obliczonej wartości razy 10
 mul dword PTR jedenascie
 add eax, ecx ; dodanie ostatnio odczytanej cyfry
 jmp pobieraj_znaki ; skok na początek pętli
@@ -67,15 +65,14 @@ pop edi
 pop esi
 pop ebx
 ret
-wczytaj_do_EAX ENDP
+wczytaj_EAX_U2_b11 ENDP
 
 wyswietl_EAX_U2_b11 PROC
 pusha
 mov esi, 10 ; indeks w tablicy 'znaki'
-mov ebx, 11 ; tu zmieniam dla base 11
+mov ebx, 11 ; dzielnik równy 11
 mov edi,eax
-;neg edi -> dla liczby ujemnej
-;and edi, 0F0000000h
+
 bt edi,31
 jc minus
 jnc plus
@@ -84,31 +81,37 @@ zostawA:
 mov byte PTR znaki[esi], 41h
 dec esi
 cmp eax, 0 ; sprawdzenie czy iloraz = 0
+je wyswietl
 jne konwersja
 zostawB:
 mov byte PTR znaki[esi], 42h
 dec esi
 cmp eax, 0 ; sprawdzenie czy iloraz = 0
+je wyswietl
 jne konwersja
 zostawC:
 mov byte PTR znaki[esi], 43h
 dec esi
 cmp eax, 0 ; sprawdzenie czy iloraz = 0
+je wyswietl
 jne konwersja
 zostawD:
 mov byte PTR znaki[esi], 44h
 dec esi
 cmp eax, 0 ; sprawdzenie czy iloraz = 0
+je wyswietl
 jne konwersja
 zostawE:
 mov byte PTR znaki[esi], 45h
 dec esi
 cmp eax, 0 ; sprawdzenie czy iloraz = 0
+je wyswietl
 jne konwersja
 zostawF:
 mov byte PTR znaki[esi], 46h
 dec esi
 cmp eax, 0 ; sprawdzenie czy iloraz = 0
+je wyswietl
 jne konwersja
 
 ; konwersja na kod ASCII
@@ -138,7 +141,7 @@ jne konwersja
 wypeln:
 or esi, esi
 jz wyswietl ; gdy indeks = 0 
-
+;mov byte PTR znaki[esi], 20h ; kod spacji JAK CHCE BEZ SPACJI TO TAK XDD
 dec esi
 jmp wypeln
 
@@ -165,8 +168,9 @@ ret
 wyswietl_EAX_U2_b11 ENDP
 
 _main PROC
-call wczytaj_do_EAX
+call wczytaj_EAX_U2_b11
 sub eax,10
+
 call wyswietl_EAX_U2_b11
 call _ExitProcess@4
 _main ENDP
