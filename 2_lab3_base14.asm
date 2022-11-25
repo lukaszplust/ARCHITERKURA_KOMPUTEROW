@@ -11,6 +11,7 @@ mnoznik_A dd 10
 mnoznik_B dd 11
 wynik dd ?
 znaki db 12 dup (?) ; deklaracja do przechowywania tworzonych cyfr
+czy_minus dd ?
 .code
 
 wczytaj_EAX_U2_b14 PROC
@@ -28,11 +29,17 @@ add esp, 12 ; usunięcie parametrów ze stosu
 xor edx,edx;licznik sumy
 mov edi,eax
 dec edi;licznik
+cmp edi,1
+je jeden_znak
 xor eax, eax
 mov ebx, OFFSET obszar ; adres obszaru ze znakami
 pobieraj_znaki:
 mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
 inc ebx ; zwiększenie indeksu
+cmp cl,2Bh
+je plus
+cmp cl,2Dh
+je minus
 cmp cl,41h
 je A
 cmp cl,42h
@@ -61,6 +68,27 @@ dec edi
 ;add eax, ecx ; dodanie ostatnio odczytanej cyfry
 jmp pobieraj_znaki ; skok na początek pętli
 
+
+;dla jednego znaku
+jeden_znak:
+mov ebx, OFFSET obszar ; adres obszaru ze znakami
+mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
+inc ebx ; zwiększenie indeksu
+sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
+movzx ecx, cl ; przechowanie wartości cyfry w ECX
+;mul dword PTR jedenascie
+xor eax,eax
+add eax, ecx ; dodanie ostatnio odczytanej cyfry
+jmp koniec
+
+
+plus:
+dec edi
+jmp pobieraj_znaki
+minus:
+dec edi
+mov czy_minus,1
+jmp pobieraj_znaki
 A:
 cmp edi,1
 je mnoz_1_A
@@ -168,16 +196,26 @@ movzx ecx, cl ; przechowanie wartości cyfry w ECX
 add eax, ecx ; dodanie ostatnio odczytanej cyfry
 neg eax
 jmp neguj ; skok na początek pętli
+
+neguj_wynik:
+neg eax
+jmp koniec
+
 byl_enter: ; wartość binarna w EAX
 mov eax,wynik
+xor esi,esi
+mov esi,czy_minus
+cmp esi,1
+je neguj_wynik
+
+koniec:
 pop ebp
 pop edi
 pop esi
 pop ebx
 ret
 wczytaj_EAX_U2_b14 ENDP
-;332974
-;414900
+
 wyswietl_EAX_U2_b14 PROC
 pusha
 mov esi, 10 ; indeks w tablicy 'znaki'
@@ -266,6 +304,7 @@ plus:
 mov eax,edi
 mov byte PTR znaki[0], 02Bh
 jmp konwersja
+
 wyswietl:
  ; kod nowego wiersza
 mov byte PTR znaki[11], 0Ah
@@ -281,8 +320,7 @@ wyswietl_EAX_U2_b14 ENDP
 _main PROC
 call wczytaj_EAX_U2_b14
 sub eax,10
-;mov eax,-32326
-;call wyswietl_EAX_U2_b14
+call wyswietl_EAX_U2_b14
 call _ExitProcess@4
 _main ENDP
 END
