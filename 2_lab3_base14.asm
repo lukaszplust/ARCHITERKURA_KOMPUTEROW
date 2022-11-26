@@ -39,13 +39,11 @@ inc ebx ; zwiększenie indeksu
 cmp cl,2Bh
 je plus
 cmp cl,2Dh
-je minus
+je neguj
 cmp cl,41h
 je A
 cmp cl,42h
 je B
-cmp cl,2Dh
-je neguj
 cmp cl,2Bh
 je wroc
 cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
@@ -181,10 +179,11 @@ mov wynik,esi
 xor esi,esi
 jmp pobieraj_znaki
 
-
 wroc:
 jmp pobieraj_znaki
 neguj:
+dec edi
+mov czy_minus,1
 mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
 inc ebx ; zwiększenie indeksu
 cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
@@ -195,7 +194,7 @@ sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
 movzx ecx, cl ; przechowanie wartości cyfry w ECX
 add eax, ecx ; dodanie ostatnio odczytanej cyfry
 neg eax
-jmp neguj ; skok na początek pętli
+jmp koniec ; skok na początek pętli
 
 neguj_wynik:
 neg eax
