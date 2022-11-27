@@ -7,7 +7,14 @@ public _main
 .data
 obszar db 14 dup (?) ; deklaracja do przechowywania wprowadzonych cyfr
 jedenascie dd 11 ; tu zmieniam w zalezności od base tu jest 11 dla 11:D
+mnoznik_A dd 10
+mnoznik_B dd 11
+mnoznik_C dd 12
+mnoznik_D dd 13
+mnoznik_E dd 14
+wynik dd ?
 znaki db 12 dup (?) ; deklaracja do przechowywania tworzonych cyfr
+czy_minus dd ?
 .code
 
 wczytaj_EAX_U2_b11 PROC
@@ -22,32 +29,348 @@ call __read ; odczytywanie znaków z klawiatury
 add esp, 12 ; usunięcie parametrów ze stosu
 ; biezaca wartość przekształcanej liczby przechowywana jest
 ; w rejestrze EAX; przyjmujemy 0 jako wartość początkową
-
+xor edx,edx;licznik sumy
+mov edi,eax
+dec edi;przez to tworze sobie potege -2 poniewaz zaczynam od 0 czyli -1
+;i enter czyli -2 simple:DD
+cmp edi,1
+dec edi;tu jest ciag dalszy do rozwazan wyzej jako drugi minus heh
+je jeden_znak
 xor eax, eax
 mov ebx, OFFSET obszar ; adres obszaru ze znakami
 pobieraj_znaki:
 mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
 inc ebx ; zwiększenie indeksu
-cmp cl,41h
-je A
+cmp cl,2Bh
+je plus
 cmp cl,2Dh
 je neguj
+cmp cl,41h
+je A
+cmp cl,42h
+je B
+cmp cl,43h
+je znak_C
+cmp cl,44h
+je D
+cmp cl,45h
+je E
 cmp cl,2Bh
 je wroc
 cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
 je byl_enter ; skok, gdy naciśnięto Enter
 sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
 movzx ecx, cl ; przechowanie wartości cyfry w ECX
-mul dword PTR jedenascie
+xor eax,eax
 add eax, ecx ; dodanie ostatnio odczytanej cyfry
+mov esi,edi
+normalnie:
+mul dword PTR jedenascie
+dec esi
+cmp esi,0
+jne normalnie
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+dec edi
+;add eax, ecx ; dodanie ostatnio odczytanej cyfry
 jmp pobieraj_znaki ; skok na początek pętli
 
-A:
-add eax,120
+jedenA:
+mov eax,10
+jmp koniec
+jedenB:
+mov eax,11
+jmp koniec
+jedenC:
+mov eax,12
+jmp koniec
+jedenD:
+mov eax,13
+jmp koniec
+jedenE:
+mov eax,14
+jmp koniec
+;dla jednego znaku
+jeden_znak:
+mov ebx, OFFSET obszar ; adres obszaru ze znakami
+mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
+inc ebx ; zwiększenie indeksu
+cmp cl,41h
+je jedenA
+cmp cl,42h
+je jedenB
+cmp cl,43h
+je jedenC
+cmp cl,44h
+je jedenD
+cmp cl,45h
+je jedenE
+
+sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
+movzx ecx, cl ; przechowanie wartości cyfry w ECX
+;mul dword PTR jedenascie
+xor eax,eax
+add eax, ecx ; dodanie ostatnio odczytanej cyfry
+jmp koniec
+
+
+plus:
+dec edi
 jmp pobieraj_znaki
+minus:
+dec edi
+mov czy_minus,1
+jmp pobieraj_znaki
+E:
+cmp edi,1
+je mnoz_1_E
+cmp edi,0
+je mnoz_0_E
+;mov edx,eax
+;dec edi; musze odjac do potegi
+mov esi,edi
+;esi -> licznik petli potrzebna do potegowania
+;mov eax,10
+mov eax,[jedenascie]
+dec esi
+ptl_E:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_E
+mul dword ptr mnoznik_E
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+A:
+cmp edi,1
+je mnoz_1_A
+cmp edi,0
+je mnoz_0_A
+;mov edx,eax
+;dec edi; musze odjac do potegi
+mov esi,edi
+;esi -> licznik petli potrzebna do potegowania
+;mov eax,10
+mov eax,[jedenascie]
+dec esi
+ptl_A:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_A
+mul dword ptr mnoznik_A
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+znak_C:
+cmp edi,1
+je mnoz_1_C
+cmp edi,0
+je mnoz_0_C
+
+;dec edi; musze odjac do potegi
+mov esi,edi
+mov eax,[jedenascie]
+dec esi
+ptl_C:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_C
+mul dword ptr mnoznik_C
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+D:
+cmp edi,1
+je mnoz_1_D
+cmp edi,0
+je mnoz_0_D
+;mov edx,eax
+;dec edi; musze odjac do potegi
+mov esi,edi
+;esi -> licznik petli potrzebna do potegowania
+;mov eax,10
+mov eax,[jedenascie]
+dec esi
+ptl_D:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_D
+mul dword ptr mnoznik_D
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+mnoz_1_E:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_E
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+mnoz_1_D:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_D
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+;DLA POTEGI LICZBA_base ^1 dla A
+mnoz_1_A:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_A
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+mnoz_0_D:
+mov eax,1
+mul dword ptr mnoznik_D
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+;DLA POTEGI LICZBA_base ^0 dla A
+mnoz_0_E:
+mov eax,1
+mul dword ptr mnoznik_E
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+mnoz_0_A:
+mov eax,1
+mul dword ptr mnoznik_A
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+;DLA POTEGI LICZBA_base ^1 dla B
+mnoz_1:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+
+
+mnoz_1_B:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+mnoz_0_B:
+mov eax,1
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+mnoz_1_C:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_C
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+mnoz_0_C:
+mov eax,1
+mul dword ptr mnoznik_C
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+;DLA POTEGI LICZBA_base ^0 dla B
+mnoz_0:
+mov eax,1
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+
+B:
+cmp edi,1
+je mnoz_1_B
+cmp edi,0
+je mnoz_0_B
+;mov edx,eax
+;dec edi; musze odjac do potegi
+mov esi,edi
+;esi -> licznik petli potrzebna do potegowania
+;mov eax,10
+mov eax,[jedenascie]
+dec esi
+ptl_B:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_B
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+
 wroc:
 jmp pobieraj_znaki
 neguj:
+dec edi
+mov czy_minus,1
 mov cl, [ebx] ; pobranie kolejnej cyfry w kodzie ASCII
 inc ebx ; zwiększenie indeksu
 cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
@@ -58,8 +381,20 @@ sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
 movzx ecx, cl ; przechowanie wartości cyfry w ECX
 add eax, ecx ; dodanie ostatnio odczytanej cyfry
 neg eax
-jmp neguj ; skok na początek pętli
+jmp koniec ; skok na początek pętli
+
+neguj_wynik:
+neg eax
+jmp koniec
+
 byl_enter: ; wartość binarna w EAX
+mov eax,wynik
+xor esi,esi
+mov esi,czy_minus
+cmp esi,1
+je neguj_wynik
+
+koniec:
 pop ebp
 pop edi
 pop esi
@@ -155,6 +490,7 @@ plus:
 mov eax,edi
 mov byte PTR znaki[0], 02Bh
 jmp konwersja
+
 wyswietl:
  ; kod nowego wiersza
 mov byte PTR znaki[11], 0Ah
@@ -170,7 +506,6 @@ wyswietl_EAX_U2_b11 ENDP
 _main PROC
 call wczytaj_EAX_U2_b11
 sub eax,10
-
 call wyswietl_EAX_U2_b11
 call _ExitProcess@4
 _main ENDP
