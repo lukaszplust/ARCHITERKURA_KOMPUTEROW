@@ -10,6 +10,8 @@ jedenascie dd 13 ; tu zmieniam w zalezności od base tu jest 11 dla 11:D
 mnoznik_A dd 10
 mnoznik_B dd 11
 mnoznik_C dd 12
+mnoznik_D dd 13
+mnoznik_E dd 14
 wynik dd ?
 znaki db 12 dup (?) ; deklaracja do przechowywania tworzonych cyfr
 czy_minus dd ?
@@ -29,13 +31,12 @@ add esp, 12 ; usunięcie parametrów ze stosu
 ; w rejestrze EAX; przyjmujemy 0 jako wartość początkową
 xor edx,edx;licznik sumy
 mov edi,eax
-dec edi
+dec edi;przez to tworze sobie potege -2 poniewaz zaczynam od 0 czyli -1
+;i enter czyli -2 simple:DD
 cmp edi,1
 je jeden_znak
-;sub edi,2 dla base 11 XDD??
-;tu dla base 11 to dec XD?
-; ->>>>
-dec edi; tu odjac dla base 11
+dec edi;ciag dalszy do tego wyzej heh
+
 xor eax, eax
 mov ebx, OFFSET obszar ; adres obszaru ze znakami
 pobieraj_znaki:
@@ -50,7 +51,11 @@ je A
 cmp cl,42h
 je B
 cmp cl,43h
-je w_C
+je znak_C
+cmp cl,44h
+je D
+cmp cl,45h
+je E
 cmp cl,2Bh
 je wroc
 cmp cl, 10 ; sprawdzenie czy naciśnięto Enter
@@ -85,6 +90,9 @@ jmp koniec
 jedenD:
 mov eax,13
 jmp koniec
+jedenE:
+mov eax,14
+jmp koniec
 ;dla jednego znaku
 jeden_znak:
 mov ebx, OFFSET obszar ; adres obszaru ze znakami
@@ -98,6 +106,9 @@ cmp cl,43h
 je jedenC
 cmp cl,44h
 je jedenD
+cmp cl,45h
+je jedenE
+
 sub cl, 30H ; zamiana kodu ASCII na wartość cyfry
 movzx ecx, cl ; przechowanie wartości cyfry w ECX
 ;mul dword PTR jedenascie
@@ -113,13 +124,37 @@ minus:
 dec edi
 mov czy_minus,1
 jmp pobieraj_znaki
+E:
+cmp edi,1
+je mnoz_1_E
+cmp edi,0
+je mnoz_0_E
+;mov edx,eax
+;dec edi; musze odjac do potegi
+mov esi,edi
+;esi -> licznik petli potrzebna do potegowania
+;mov eax,10
+mov eax,[jedenascie]
+dec esi
+ptl_E:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_E
+mul dword ptr mnoznik_E
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
 A:
 cmp edi,1
 je mnoz_1_A
 cmp edi,0
 je mnoz_0_A
 ;mov edx,eax
-dec edi; musze odjac do potegi
+;dec edi; musze odjac do potegi
 mov esi,edi
 ;esi -> licznik petli potrzebna do potegowania
 ;mov eax,10
@@ -138,7 +173,71 @@ mov wynik,esi
 xor esi,esi
 jmp pobieraj_znaki
 
+znak_C:
+cmp edi,1
+je mnoz_1_C
+cmp edi,0
+je mnoz_0_C
 
+;dec edi; musze odjac do potegi
+mov esi,edi
+mov eax,[jedenascie]
+dec esi
+ptl_C:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_C
+mul dword ptr mnoznik_C
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+D:
+cmp edi,1
+je mnoz_1_D
+cmp edi,0
+je mnoz_0_D
+;mov edx,eax
+;dec edi; musze odjac do potegi
+mov esi,edi
+;esi -> licznik petli potrzebna do potegowania
+;mov eax,10
+mov eax,[jedenascie]
+dec esi
+ptl_D:
+mul dword  ptr jedenascie
+dec esi
+cmp esi,0
+jne ptl_D
+mul dword ptr mnoznik_D
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+mnoz_1_E:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_E
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+mnoz_1_D:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_D
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
 ;DLA POTEGI LICZBA_base ^1 dla A
 mnoz_1_A:
 mov eax,[jedenascie]
@@ -150,7 +249,25 @@ mov wynik,esi
 xor esi,esi
 jmp pobieraj_znaki
 
+mnoz_0_D:
+mov eax,1
+mul dword ptr mnoznik_D
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
 ;DLA POTEGI LICZBA_base ^0 dla A
+mnoz_0_E:
+mov eax,1
+mul dword ptr mnoznik_E
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
 mnoz_0_A:
 mov eax,1
 mul dword ptr mnoznik_A
@@ -164,6 +281,28 @@ jmp pobieraj_znaki
 ;DLA POTEGI LICZBA_base ^1 dla B
 mnoz_1:
 mov eax,[jedenascie]
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+
+
+mnoz_1_B:
+mov eax,[jedenascie]
+mul dword ptr mnoznik_B
+dec edi
+mov esi,wynik
+add esi,eax
+mov wynik,esi
+xor esi,esi
+jmp pobieraj_znaki
+
+mnoz_0_B:
+mov eax,1
 mul dword ptr mnoznik_B
 dec edi
 mov esi,wynik
@@ -200,21 +339,15 @@ add esi,eax
 mov wynik,esi
 xor esi,esi
 jmp pobieraj_znaki
+
+
 B:
 cmp edi,1
-je mnoz_1
+je mnoz_1_B
 cmp edi,0
-je mnoz_0
-mov esi,edi
-;esi -> licznik petli potrzebna do potegowania
-;mov eax,10
-mov eax,[jedenascie]
-dec esi
-w_C:
-cmp edi,1
-je mnoz_1_C
-cmp edi,0
-je mnoz_0_C
+je mnoz_0_B
+;mov edx,eax
+;dec edi; musze odjac do potegi
 mov esi,edi
 ;esi -> licznik petli potrzebna do potegowania
 ;mov eax,10
@@ -225,13 +358,14 @@ mul dword  ptr jedenascie
 dec esi
 cmp esi,0
 jne ptl_B
-mul dword ptr mnoznik_C
+mul dword ptr mnoznik_B
 dec edi
 mov esi,wynik
 add esi,eax
 mov wynik,esi
 xor esi,esi
 jmp pobieraj_znaki
+
 
 wroc:
 jmp pobieraj_znaki
