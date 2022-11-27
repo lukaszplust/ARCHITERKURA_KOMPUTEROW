@@ -31,15 +31,12 @@ add esp, 12 ; usunięcie parametrów ze stosu
 ; w rejestrze EAX; przyjmujemy 0 jako wartość początkową
 xor edx,edx;licznik sumy
 mov edi,eax
-sub edi,2;przez to tworze sobie potege -2 poniewaz zaczynam od 0 czyli -1
+dec edi;przez to tworze sobie potege -2 poniewaz zaczynam od 0 czyli -1
 ;i enter czyli -2 simple:DD
 cmp edi,1
 je jeden_znak
+dec edi;ciag dalszy do tego wyzej heh
 
-;sub edi,2 dla base 11 XDD??
-;tu dla base 11 to dec XD?
-; ->>>>
-;dec edi; tu odjac dla base 11
 xor eax, eax
 mov ebx, OFFSET obszar ; adres obszaru ze znakami
 pobieraj_znaki:
