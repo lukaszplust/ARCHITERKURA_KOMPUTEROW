@@ -18,21 +18,16 @@ xor eax,eax
 xor ebx,ebx
 lea esi,znak
 mov dl,[esi+2]
-mov cl,dl
 mov bl,[esi+3]
-mov dl,bl
-xchg cl,dl
-mov [esi+2],cl
-mov [esi+3],dl
+xchg dl,bl
+mov [esi+2],dl
+mov [esi+3],bl
 
 mov dl,[esi+0]
-mov cl,dl
 mov bl,[esi+1]
-mov dl,bl
-
-xchg cl,dl
-mov [esi+0],cl
-mov [esi+1],dl
+xchg dl,bl
+mov [esi+0],dl
+mov [esi+1],bl
 
 
 
